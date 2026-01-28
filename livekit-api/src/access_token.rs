@@ -133,6 +133,16 @@ impl Default for SIPGrants {
     }
 }
 
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum ParticipantKind {
+    Standard,
+    Agent,
+    Sip,
+    Egress,
+    Ingress,
+}
+
 #[derive(Debug, Clone, Serialize, Default, Deserialize, PartialEq)]
 #[serde(default)]
 #[serde(rename_all = "camelCase")]
@@ -149,6 +159,7 @@ pub struct Claims {
     pub metadata: String,
     pub attributes: HashMap<String, String>,
     pub room_config: Option<livekit_protocol::RoomConfiguration>,
+    pub kind: Option<ParticipantKind>,
 }
 
 #[derive(Clone)]
@@ -186,6 +197,7 @@ impl AccessToken {
                 metadata: Default::default(),
                 attributes: HashMap::new(),
                 room_config: Default::default(),
+                kind: Default::default(),
             },
         }
     }
@@ -209,6 +221,11 @@ impl AccessToken {
 
     pub fn with_grants(mut self, grants: VideoGrants) -> Self {
         self.claims.video = grants;
+        self
+    }
+
+    pub fn with_kind(mut self, kind: ParticipantKind) -> Self {
+        self.claims.kind = Some(kind);
         self
     }
 
