@@ -24,6 +24,8 @@ pub struct RoomCompositeOptions {
     pub audio_only: bool,
     pub video_only: bool,
     pub custom_base_url: String,
+    /// Only applies when audio_only is true (default: DefaultMixing)
+    pub audio_mixing: Option<proto::AudioMixing>,
 }
 
 #[derive(Default, Clone, Debug)]
@@ -110,6 +112,8 @@ impl EgressClient {
                     room_name: room.to_string(),
                     layout: options.layout,
                     audio_only: options.audio_only,
+                    audio_mixing: options.audio_mixing.unwrap_or(proto::AudioMixing::DefaultMixing)
+                        as i32,
                     video_only: options.video_only,
                     options: Some(proto::room_composite_egress_request::Options::Advanced(
                         options.encoding.into(),
